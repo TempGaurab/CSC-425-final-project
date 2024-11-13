@@ -292,7 +292,7 @@ elif model == "Models Together":
                         annotated_image, left_eye, right_eye = get_output(image)
                         
                         # Convert CV2 format to PIL for display
-                        if isinstance(annotated_image, np.ndarray):
+                        if annotated_image:
                             st.image(annotated_image, caption='Detected Face Landmarks', use_container_width=True)
                         
                             if left_eye is not None and right_eye is not None:
