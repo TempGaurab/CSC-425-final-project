@@ -173,8 +173,8 @@ elif model == "Model 2: Eye Extraction":
                                 st.success("Successfully extracted both eyes!")
                                 
                                 # Ensure eye images are in correct format
-                                left_eye_pil = Image.fromarray(left_eye)
-                                right_eye_pil = Image.fromarray(right_eye)
+                                left_eye_pil = left_eye
+                                right_eye_pil = right_eye
                                 
                                 # Display extracted eyes
                                 col1, col2 = st.columns(2)
