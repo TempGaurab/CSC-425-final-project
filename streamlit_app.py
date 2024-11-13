@@ -143,69 +143,90 @@ elif model == "Model 2: Eye Extraction":
     uploaded_file = st.file_uploader("Upload an image:", type=["png", "jpg", "jpeg"])
     
     if uploaded_file is not None:
-        # Save the uploaded file temporarily
-        temp_file = "temp_upload.png"
-        with open(temp_file, "wb") as f:
-            f.write(uploaded_file.getvalue())
-        
-        image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Image', use_container_width =True)
-        
-        if st.button("Extract Eyes"):
-            with st.spinner("Extracting eyes..."):
-                try:
-                    # Get the annotated image and both eyes
-                    annotated_image, left_eye, right_eye = get_output(temp_file)
-                    
-                    # Convert CV2 format to PIL for display
-                    st.image(annotated_image, caption='Detected Face Landmarks', use_container_width =True)
-                    
-                    if left_eye is not None and right_eye is not None:
-                        st.success("Successfully extracted both eyes!")
+        try:
+            # Read image directly from uploaded file using BytesIO
+            file_bytes = BytesIO(uploaded_file.read())
+            image = Image.open(file_bytes)
+            
+            # Convert to RGB if image is in RGBA mode
+            if image.mode == 'RGBA':
+                image = image.convert('RGB')
+            
+            # Display uploaded image
+            st.image(image, caption='Uploaded Image', use_container_width=True)
+            
+            if st.button("Extract Eyes"):
+                with st.spinner("Extracting eyes..."):
+                    try:
+                        # Save image temporarily with proper error handling
+                        temp_file = "temp_upload.jpg"  # Using jpg instead of png for better compatibility
+                        image.save(temp_file, format='JPEG', quality=95)
                         
-                        # Convert eye images from CV2 to PIL format
-                        left_eye_pil = Image.fromarray(left_eye)
-                        right_eye_pil = Image.fromarray(right_eye)
+                        # Get the annotated image and both eyes
+                        annotated_image, left_eye, right_eye = get_output(temp_file)
                         
-                        # Display extracted eyes
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.image(left_eye_pil, caption='Left Eye', use_container_width =True)
-                        with col2:
-                            st.image(right_eye_pil, caption='Right Eye', use_container_width =True)
+                        # Convert CV2 format to PIL for display
+                        if isinstance(annotated_image, np.ndarray):
+                            st.image(annotated_image, caption='Detected Face Landmarks', use_container_width=True)
                         
-                        # Create ZIP file with extracted eyes
-                        zip_buffer = BytesIO()
-                        with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-                            # Save left eye
-                            left_eye_buffer = BytesIO()
-                            left_eye_pil.save(left_eye_buffer, format='PNG')
-                            zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
+                            if left_eye is not None and right_eye is not None:
+                                st.success("Successfully extracted both eyes!")
+                                
+                                # Ensure eye images are in correct format
+                                left_eye_pil = Image.fromarray(cv2.cvtColor(left_eye, cv2.COLOR_BGR2RGB))
+                                right_eye_pil = Image.fromarray(cv2.cvtColor(right_eye, cv2.COLOR_BGR2RGB))
+                                
+                                # Display extracted eyes
+                                col1, col2 = st.columns(2)
+                                with col1:
+                                    st.image(left_eye_pil, caption='Left Eye', use_container_width=True)
+                                with col2:
+                                    st.image(right_eye_pil, caption='Right Eye', use_container_width=True)
+                                
+                                # Create ZIP file with extracted eyes
+                                zip_buffer = BytesIO()
+                                with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                                    # Save left eye
+                                    left_eye_buffer = BytesIO()
+                                    left_eye_pil.save(left_eye_buffer, format='PNG')
+                                    zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
+                                    
+                                    # Save right eye
+                                    right_eye_buffer = BytesIO()
+                                    right_eye_pil.save(right_eye_buffer, format='PNG')
+                                    zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
+                                
+                                # Add download button
+                                st.download_button(
+                                    label="Download Extracted Eyes",
+                                    data=zip_buffer.getvalue(),
+                                    file_name="extracted_eyes.zip",
+                                    mime="application/zip"
+                                )
+                            else:
+                                st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
+                        else:
+                            st.error("Failed to process the image. Please try with a different image.")
                             
-                            # Save right eye
-                            right_eye_buffer = BytesIO()
-                            right_eye_pil.save(right_eye_buffer, format='PNG')
-                            zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
-                        
-                        # Add download button
-                        st.download_button(
-                            label="Download Extracted Eyes",
-                            data=zip_buffer.getvalue(),
-                            file_name="extracted_eyes.zip",
-                            mime="application/zip"
-                        )
-                    else:
-                        st.warning("Could not detect eyes clearly in the image.")
-                        
-                except Exception as e:
-                    st.error(f"Error during eye extraction: {str(e)}")
-                finally:
-                    # Clean up temporary file
-                    if os.path.exists(temp_file):
-                        os.remove(temp_file)
+                    except Exception as e:
+                        st.error(f"Error during eye extraction: {str(e)}")
+                        st.info("Try uploading a different image with a clearly visible face.")
+                    finally:
+                        # Clean up temporary file
+                        if os.path.exists(temp_file):
+                            try:
+                                os.remove(temp_file)
+                            except Exception:
+                                pass
+                            
+        except Exception as e:
+            st.error(f"Error loading image: {str(e)}")
+            st.info("Please ensure you're uploading a valid image file.")
     else:
-        st.warning("Please upload an image to extract eyes.")
+        st.info("Please upload an image to extract eyes.")
 
+
+        
 elif model == "Model 3: Image Classification":
     st.header("Model 3: Sleepiness Detection!")
     st.subheader("Check for drowsiness in the eye of the driver.")
