@@ -179,14 +179,14 @@ elif model == "Model 2: Eye Extraction":
                                 # Display extracted eyes
                                 col1, col2 = st.columns(2)
                                 with col1:
-                                    st.image(left_eye_pil, caption='Left Eye', use_container_width=True)
+                                    st.image(left_eye_pil, caption='One Eye', use_container_width=True)
                                 with col2:
-                                    st.image(right_eye_pil, caption='Right Eye', use_container_width=True)
+                                    st.image(right_eye_pil, caption='Other Eye', use_container_width=True)
 
                                 left_eye_pil = Image.fromarray(left_eye)
                                 right_eye_pil = Image.fromarray(right_eye)
                                 # Create ZIP file with extracted eyes
-                                
+
                                 zip_buffer = BytesIO()
                                 with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
                                     # Save left eye
