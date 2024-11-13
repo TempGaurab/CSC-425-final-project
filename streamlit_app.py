@@ -288,7 +288,7 @@ elif model == "Models Together":
                 st.write("Step 2: Eye Extraction")
                 try: 
                     # Get the annotated image and both eyes
-                    annotated_image, left_eye, right_eye = get_output(image)
+                    annotated_image, left_eye, right_eye = get_output(pil_image)
                     
                     # Convert CV2 format to PIL for display
                     if isinstance(annotated_image, np.ndarray):
@@ -313,6 +313,8 @@ elif model == "Models Together":
                 except Exception as e:
                     st.error(f"Error loading image: {str(e)}")
                     st.info("Please ensure you're uploading a valid image file.")
+            else:
+                st.write("Person not found!")
     else:
         st.info("Please upload an image to extract eyes.")
 
