@@ -288,7 +288,7 @@ elif model == "Models Together":
                 st.write("Step 2: Eye Extraction")
                 try:
                     # Read image directly from uploaded file using BytesIO
-                    file_bytes = BytesIO(uploaded_file.read())
+                    file_bytes = BytesIO(image.read())
                     image = Image.open(file_bytes)
                     
                     # Convert to RGB if image is in RGBA mode
