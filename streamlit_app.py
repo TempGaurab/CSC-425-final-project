@@ -290,7 +290,7 @@ elif model == "Models Together":
                 try:
                     # Save the image temporarily for eye extraction
                     temp_file = "temp_upload.jpg"
-                    pil_image.save(temp_file, format='JPEG', quality=95)
+                    pil_image.save(temp_file, format='JPEG', quality=100)
 
                     # Get the annotated image and both eyes
                     annotated_image, left_eye, right_eye = get_output(temp_file)
