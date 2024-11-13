@@ -314,15 +314,7 @@ elif model == "Models Together":
                                 # Create ZIP file with extracted eyes               
                     except Exception as e:
                         st.error(f"Error during eye extraction: {str(e)}")
-                        st.info("Try uploading a different image with a clearly visible face.")
-                    finally:
-                        # Clean up temporary file
-                        if os.path.exists(image):
-                            try:
-                                os.remove(image)
-                            except Exception:
-                                pass
-                            
+                        st.info("Try uploading a different image with a clearly visible face.")          
                 except Exception as e:
                     st.error(f"Error loading image: {str(e)}")
                     st.info("Please ensure you're uploading a valid image file.")
