@@ -294,8 +294,8 @@ elif model == "Models Together":
                             drowsiness_result_right = main3(right_eye_pil)
                             st.write(f"🖼️ Right Eye Prediction: {drowsiness_result_right}")
 
-                            left_eye_pil = Image.fromarray(left_eye)
-                            right_eye_pil = Image.fromarray(right_eye)
+                            left_eye_pil = left_eye
+                            right_eye_pil = right_eye
                         
                         
                         # Create ZIP file with all processed images
@@ -304,7 +304,8 @@ elif model == "Models Together":
                             # Save original image
                             pil_image.save(zip_buffer, format='PNG')
                             zip_file.writestr("original_image.png", zip_buffer.getvalue())
-                            
+                            left_eye_pil = Image.fromarray(left_eye)
+                            right_eye_pil = Image.fromarray(right_eye)
                             # Save left eye
                             left_eye_buffer = BytesIO()
                             left_eye_pil.save(left_eye_buffer, format='PNG')
