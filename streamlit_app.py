@@ -308,27 +308,6 @@ elif model == "Models Together":
                                 st.image(left_eye, caption='Left Eye', use_container_width=True)
                             with col2:
                                 st.image(right_eye, caption='Right Eye', use_container_width=True)
-                            
-                            # Create ZIP file with extracted eyes
-                            zip_buffer = BytesIO()
-                            with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-                                # Save left eye
-                                left_eye_buffer = BytesIO()
-                                left_eye.save(left_eye_buffer, format='PNG')
-                                zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
-                                
-                                # Save right eye
-                                right_eye_buffer = BytesIO()
-                                right_eye.save(right_eye_buffer, format='PNG')
-                                zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
-                            
-                            # Add download button for ZIP file
-                            st.download_button(
-                                label="Download Extracted Eyes",
-                                data=zip_buffer.getvalue(),
-                                file_name="extracted_eyes.zip",
-                                mime="application/zip"
-                            )
                         else:
                             st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
                     else:
