@@ -7,7 +7,6 @@ from part3 import main3  # Function for image classification
 from part2 import get_output
 from io import BytesIO
 import os
-import base64
 import zipfile
 
 def get_image_download_bytes(pil_image, format='PNG'):
