@@ -144,7 +144,7 @@ elif model == "Model 2: Eye Extraction":
     
     if uploaded_file is not None:
         # Save the uploaded file temporarily
-        temp_file = "temp_upload.jpg"
+        temp_file = "temp_upload.png"
         with open(temp_file, "wb") as f:
             f.write(uploaded_file.getvalue())
         
