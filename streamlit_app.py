@@ -308,12 +308,12 @@ elif model == "Models Together":
                             # Display extracted eyes
                             col1, col2 = st.columns(2)
                             with col1:
+                                left_eye_pil = Image.fromarray(left_eye)
                                 st.image(left_eye_pil, caption='One Eye', use_container_width=True)
                             with col2:
+                                right_eye_pil = Image.fromarray(right_eye)
                                 st.image(right_eye_pil, caption='Other Eye', use_container_width=True)
 
-                            left_eye_pil = Image.fromarray(left_eye)
-                            right_eye_pil = Image.fromarray(right_eye)
                             # Create ZIP file with extracted eyes
 
                             zip_buffer = BytesIO()
