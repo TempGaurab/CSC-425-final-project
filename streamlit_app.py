@@ -287,9 +287,6 @@ elif model == "Models Together":
                 # Step 2: Eye Extraction (from Model 2)
                 st.write("Step 2: Eye Extraction")
                 try: 
-                    # Display uploaded image
-                    st.image(image, caption='Uploaded Image', use_container_width=True)
-                    
                     if st.button("Extract Eyes"):
                         with st.spinner("Extracting eyes..."):
                             try:
