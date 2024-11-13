@@ -275,8 +275,8 @@ elif model == "Models Together":
                         st.success("Successfully extracted eyes!")
                         
                         # Convert numpy arrays to PIL Images
-                        left_eye_pil = Image.fromarray(left_eye)
-                        right_eye_pil = Image.fromarray(right_eye)
+                        left_eye_pil = left_eye
+                        right_eye_pil = right_eye
                         
                         # Display eyes side by side
                         col1, col2 = st.columns(2)
@@ -293,6 +293,10 @@ elif model == "Models Together":
                             st.write("Step 3: Drowsiness Detection (Right Eye)")
                             drowsiness_result_right = main3(right_eye_pil)
                             st.write(f"🖼️ Right Eye Prediction: {drowsiness_result_right}")
+
+                            left_eye_pil = Image.fromarray(left_eye)
+                            right_eye_pil = Image.fromarray(right_eye)
+                        
                         
                         # Create ZIP file with all processed images
                         zip_buffer = BytesIO()
