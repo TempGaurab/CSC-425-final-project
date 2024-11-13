@@ -287,13 +287,9 @@ elif model == "Models Together":
                 # Step 2: Eye Extraction (from Model 2)
                 st.write("Step 2: Eye Extraction")
                 try: 
-                    try:
-                        # Save image temporarily with proper error handling
-                        temp_file = "temp_upload.jpg"  # Using jpg instead of png for better compatibility
-                        image.save(temp_file, format='JPEG', quality=95)
-                        
+                    try: 
                         # Get the annotated image and both eyes
-                        annotated_image, left_eye, right_eye = get_output(temp_file)
+                        annotated_image, left_eye, right_eye = get_output(image)
                         
                         # Convert CV2 format to PIL for display
                         if isinstance(annotated_image, np.ndarray):
@@ -321,9 +317,9 @@ elif model == "Models Together":
                         st.info("Try uploading a different image with a clearly visible face.")
                     finally:
                         # Clean up temporary file
-                        if os.path.exists(temp_file):
+                        if os.path.exists(image):
                             try:
-                                os.remove(temp_file)
+                                os.remove(image)
                             except Exception:
                                 pass
                             
