@@ -301,15 +301,17 @@ elif model == "Models Together":
                         
                         if left_eye is not None and right_eye is not None:
                             st.success("Successfully extracted both eyes!")
-
+                            
                             # Display extracted eyes
                             col1, col2 = st.columns(2)
                             with col1:
                                 st.image(left_eye, caption='Left Eye', use_container_width=True)
+                                left_eye = Image.open(left_eye)
                                 result = main3(left_eye)
                                 st.info(result)
                             with col2:
                                 st.image(right_eye, caption='Right Eye', use_container_width=True)
+                                right_eye = Image.open(right_eye)
                                 result = main3(right_eye)
                                 st.info(result)
                         else:
