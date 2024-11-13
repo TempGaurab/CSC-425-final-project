@@ -6,11 +6,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import matplotlib.pyplot as plt
 
-MARGIN = 10  # pixels
-ROW_SIZE = 10  # pixels
-FONT_SIZE = 1
-FONT_THICKNESS = 1
-TEXT_COLOR = (255, 0, 0)  # red
+
 def visualize(
     image,
     detection_result
@@ -22,6 +18,11 @@ def visualize(
   Returns:
     Image with bounding boxes.
   """
+  MARGIN = 10  # pixels
+  ROW_SIZE = 10  # pixels
+  FONT_SIZE = 1
+  FONT_THICKNESS = 1
+  TEXT_COLOR = (255, 0, 0)  # red
   for detection in detection_result.detections:
     # Draw bounding_box
     bbox = detection.bounding_box
@@ -42,7 +43,7 @@ def visualize(
   return image
 
 def main(image_path):
-    rgb_annotated_image,title = detectperson(image_path)
+    title = detectperson(image_path)
     if title == "person":
         return True
     return False
@@ -61,4 +62,4 @@ def detectperson(imageid):
     annotated_image = visualize(image_copy, detection_result)
     rgb_annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
     title = detection_result.detections[0].categories[0].category_name
-    return rgb_annotated_image,title
+    return title
