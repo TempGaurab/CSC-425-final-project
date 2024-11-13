@@ -245,7 +245,7 @@ elif model == "Model 3: Image Classification":
 
         # Button for classification
         if st.button("Classify Image"):
-            result = main3(image)  # Pass the image to the main3 function
+            result,score = main3(image)  # Pass the image to the main3 function
             st.write(f"🖼️ Prediction: {result}")  # Display the prediction result
             
             # Add download button for the processed image
@@ -306,12 +306,14 @@ elif model == "Models Together":
                             col1, col2 = st.columns(2)
                             with col1:
                                 left_eye_pil = Image.fromarray(left_eye)
-                                result1 = main3(left_eye_pil)
+                                result1,score1 = main3(left_eye_pil)
                                 st.image(left_eye, caption=result1, use_container_width=True)
+                                st.info(score1)
                             with col2:
                                 right_eye_pil = Image.fromarray(right_eye)
-                                result2 = main3(right_eye_pil)
+                                result2,score2 = main3(right_eye_pil)
                                 st.image(right_eye, caption= result2 , use_container_width=True)
+                                st.info(score2)
                         else:
                             st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
                     else:

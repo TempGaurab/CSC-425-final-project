@@ -24,4 +24,4 @@ def main3(image_path):
     test_image = preprocess_image(image_path)
     prediction = get_model().predict(test_image)
     result = output(prediction)
-    return result
+    return result,prediction
