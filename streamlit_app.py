@@ -173,8 +173,8 @@ elif model == "Model 2: Eye Extraction":
                                 st.success("Successfully extracted both eyes!")
                                 
                                 # Ensure eye images are in correct format
-                                left_eye_pil = Image.fromarray(cv2.cvtColor(left_eye, cv2.COLOR_BGR2RGB))
-                                right_eye_pil = Image.fromarray(cv2.cvtColor(right_eye, cv2.COLOR_BGR2RGB))
+                                left_eye_pil = Image.fromarray(left_eye)
+                                right_eye_pil = Image.fromarray(right_eye)
                                 
                                 # Display extracted eyes
                                 col1, col2 = st.columns(2)
@@ -226,7 +226,7 @@ elif model == "Model 2: Eye Extraction":
         st.info("Please upload an image to extract eyes.")
 
 
-        
+
 elif model == "Model 3: Image Classification":
     st.header("Model 3: Sleepiness Detection!")
     st.subheader("Check for drowsiness in the eye of the driver.")
