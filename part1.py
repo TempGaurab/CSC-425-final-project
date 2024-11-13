@@ -58,8 +58,5 @@ def detectperson(imageid):
     image = mp.Image.create_from_file(imageid)
     # STEP 4: Detect objects in the input image.
     detection_result = detector.detect(image)
-    image_copy = np.copy(image.numpy_view())
-    annotated_image = visualize(image_copy, detection_result)
-    rgb_annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
     title = detection_result.detections[0].categories[0].category_name
     return title
