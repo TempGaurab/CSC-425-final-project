@@ -118,11 +118,11 @@ if model == "Model 1: Person Detection":
         
         # Display uploaded image
         pil_image = cv2_to_pil(image)
-        st.image(pil_image, caption='Uploaded Image', use_column_width =True)
+        st.image(pil_image, caption='Uploaded Image', use_container_width  =True)
         
         # Button for detection
         if st.button("Detect Person"):
-            person_detected, score = main(image)  # Pass the image to the main function
+            person_detected = main(image)  # Pass the image to the main function
             st.write(f"👤 Person detected: {person_detected}")  # Display result
             
             # Add download button for the processed image
@@ -149,7 +149,7 @@ elif model == "Model 2: Eye Extraction":
             f.write(uploaded_file.getvalue())
         
         image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Image', use_column_width=True)
+        st.image(image, caption='Uploaded Image', use_container_width =True)
         
         if st.button("Extract Eyes"):
             with st.spinner("Extracting eyes..."):
@@ -158,7 +158,7 @@ elif model == "Model 2: Eye Extraction":
                     annotated_image, left_eye, right_eye = get_output(temp_file)
                     
                     # Convert CV2 format to PIL for display
-                    st.image(annotated_image, caption='Detected Face Landmarks', use_column_width=True)
+                    st.image(annotated_image, caption='Detected Face Landmarks', use_container_width =True)
                     
                     if left_eye is not None and right_eye is not None:
                         st.success("Successfully extracted both eyes!")
@@ -170,9 +170,9 @@ elif model == "Model 2: Eye Extraction":
                         # Display extracted eyes
                         col1, col2 = st.columns(2)
                         with col1:
-                            st.image(left_eye_pil, caption='Left Eye', use_column_width=True)
+                            st.image(left_eye_pil, caption='Left Eye', use_container_width =True)
                         with col2:
-                            st.image(right_eye_pil, caption='Right Eye', use_column_width=True)
+                            st.image(right_eye_pil, caption='Right Eye', use_container_width =True)
                         
                         # Create ZIP file with extracted eyes
                         zip_buffer = BytesIO()
@@ -217,7 +217,7 @@ elif model == "Model 3: Image Classification":
         image = Image.open(uploaded_file)
         
         # Display uploaded image
-        st.image(image, caption='Uploaded Image', use_column_width=True)
+        st.image(image, caption='Uploaded Image', use_container_width =True)
 
         # Button for classification
         if st.button("Classify Image"):
@@ -251,14 +251,14 @@ elif model == "Models Together":
         nparr = np.frombuffer(image_bytes, np.uint8)
         cv2_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         pil_image = cv2_to_pil(cv2_image)
-        st.image(pil_image, caption='Uploaded Image', use_column_width=True)
+        st.image(pil_image, caption='Uploaded Image', use_container_width =True)
         
         if st.button("Run Complete Analysis"):
             st.write("🔄 Running complete analysis...")
             
             # Step 1: Person Detection
             st.write("Step 1: Person Detection")
-            person_detected, score = main(cv2_image)
+            person_detected = main(cv2_image)
             st.write(f"👤 Person detected: {person_detected}")
             
             if person_detected:
@@ -269,7 +269,7 @@ elif model == "Models Together":
                     annotated_image, left_eye, right_eye = get_output(temp_file)
                     
                     # Display annotated image
-                    st.image(annotated_image, caption='Detected Face Landmarks', use_column_width=True)
+                    st.image(annotated_image, caption='Detected Face Landmarks', use_container_width =True)
                     
                     if left_eye is not None or right_eye is not None:
                         st.success("Successfully extracted eyes!")
@@ -281,14 +281,14 @@ elif model == "Models Together":
                         # Display eyes side by side
                         col1, col2 = st.columns(2)
                         with col1:
-                            st.image(left_eye_pil, caption='Left Eye', use_column_width=True)
+                            st.image(left_eye_pil, caption='Left Eye', use_container_width =True)
                             # Step 3: Drowsiness Detection for left eye
                             st.write("Step 3: Drowsiness Detection (Left Eye)")
                             drowsiness_result_left = main3(left_eye_pil)
                             st.write(f"🖼️ Left Eye Prediction: {drowsiness_result_left}")
                             
                         with col2:
-                            st.image(right_eye_pil, caption='Right Eye', use_column_width=True)
+                            st.image(right_eye_pil, caption='Right Eye', use_container_width =True)
                             # Step 3: Drowsiness Detection for right eye
                             st.write("Step 3: Drowsiness Detection (Right Eye)")
                             drowsiness_result_right = main3(right_eye_pil)
