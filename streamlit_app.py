@@ -265,98 +265,104 @@ elif model == "Models Together":
     uploaded_file = st.file_uploader("Upload an image:", type=["png", "jpg", "jpeg"], key="combined")
     
     if uploaded_file is not None:
-        # Save the uploaded file temporarily
-        temp_file = "temp_upload.jpg"
-        with open(temp_file, "wb") as f:
-            f.write(uploaded_file.getvalue())
+        try:
+            # Read image directly from uploaded file using BytesIO
+            file_bytes = BytesIO(uploaded_file.read())
+            image = Image.open(file_bytes)
             
-        # Read and display the uploaded image
-        image_bytes = uploaded_file.read()
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        cv2_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        pil_image = cv2_to_pil(cv2_image)
-        st.image(pil_image, caption='Uploaded Image', use_container_width =True)
+            # Convert to RGB if image is in RGBA mode
+            if image.mode == 'RGBA':
+                image = image.convert('RGB')
+            
+            # Display uploaded image
+            st.image(image, caption='Uploaded Image', use_container_width=True)
         
-        if st.button("Run Complete Analysis"):
-            st.write("🔄 Running complete analysis...")
-            
-            # Step 1: Person Detection
-            st.write("Step 1: Person Detection")
-            person_detected = main(cv2_image)
-            st.write(f"👤 Person detected: {person_detected}")
-            
-            if person_detected:
-                # Step 2: Eye Extraction
-                st.write("Step 2: Eye Extraction")
-                try:
-                    # Get the annotated image and both eyes
-                    annotated_image, left_eye, right_eye = get_output(temp_file)
-                    
-                    # Display annotated image
-                    st.image(annotated_image, caption='Detected Face Landmarks', use_container_width =True)
-                    
-                    if left_eye is not None or right_eye is not None:
-                        st.success("Successfully extracted eyes!")
+            if st.button("Run Complete Analysis"):
+                st.write("🔄 Running complete analysis...")
+                
+                # Step 1: Person Detection
+                st.write("Step 1: Person Detection")
+                image_bytes = uploaded_file.read()
+                nparr = np.frombuffer(image_bytes, np.uint8)
+                cv2_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                person_detected = main(cv2_image)
+                st.write(f"👤 Person detected: {person_detected}")
+                
+                if person_detected:
+                    # Step 2: Eye Extraction
+                    st.write("Step 2: Eye Extraction")
+                    try:
+                        # Get the annotated image and both eyes
+                        annotated_image, left_eye, right_eye = get_output(cv2_image)
                         
-                        # Convert numpy arrays to PIL Images
-                        left_eye_pil = left_eye
-                        right_eye_pil = right_eye
+                        # Display annotated image
+                        st.image(annotated_image, caption='Detected Face Landmarks', use_container_width =True)
                         
-                        # Display eyes side by side
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.image(left_eye_pil, caption='Left Eye', use_container_width =True)
-                            # Step 3: Drowsiness Detection for left eye
-                            st.write("Step 3: Drowsiness Detection (Left Eye)")
-                            drowsiness_result_left = main3(left_eye_pil)
-                            st.write(f"🖼️ Left Eye Prediction: {drowsiness_result_left}")
+                        if left_eye is not None or right_eye is not None:
+                            st.success("Successfully extracted eyes!")
                             
-                        with col2:
-                            st.image(right_eye_pil, caption='Right Eye', use_container_width =True)
-                            # Step 3: Drowsiness Detection for right eye
-                            st.write("Step 3: Drowsiness Detection (Right Eye)")
-                            drowsiness_result_right = main3(right_eye_pil)
-                            st.write(f"🖼️ Right Eye Prediction: {drowsiness_result_right}")
-
+                            # Convert numpy arrays to PIL Images
                             left_eye_pil = left_eye
                             right_eye_pil = right_eye
-                        
-                        
-                        # Create ZIP file with all processed images
-                        zip_buffer = BytesIO()
-                        with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-                            # Save original image
-                            pil_image.save(zip_buffer, format='PNG')
-                            zip_file.writestr("original_image.png", zip_buffer.getvalue())
-                            left_eye_pil = Image.fromarray(left_eye)
-                            right_eye_pil = Image.fromarray(right_eye)
-                            # Save left eye
-                            left_eye_buffer = BytesIO()
-                            left_eye_pil.save(left_eye_buffer, format='PNG')
-                            zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
                             
-                            # Save right eye
-                            right_eye_buffer = BytesIO()
-                            right_eye_pil.save(right_eye_buffer, format='PNG')
-                            zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
-                        
-                        # Add download button for all images
-                        st.download_button(
-                            label="Download All Images",
-                            data=zip_buffer.getvalue(),
-                            file_name="complete_analysis.zip",
-                            mime="application/zip"
-                        )
-                    else:
-                        st.warning("No eyes detected in the image.")
-                except Exception as e:
-                    st.error(f"Error during eye extraction: {str(e)}")
-                finally:
-                    # Clean up temporary file
-                    if os.path.exists(temp_file):
-                        os.remove(temp_file)
-            else:
-                st.warning("No person detected in the image. Stopping analysis.")
+                            # Display eyes side by side
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.image(left_eye_pil, caption='Left Eye', use_container_width =True)
+                                # Step 3: Drowsiness Detection for left eye
+                                st.write("Step 3: Drowsiness Detection (Left Eye)")
+                                drowsiness_result_left = main3(left_eye_pil)
+                                st.write(f"🖼️ Left Eye Prediction: {drowsiness_result_left}")
+                                
+                            with col2:
+                                st.image(right_eye_pil, caption='Right Eye', use_container_width =True)
+                                # Step 3: Drowsiness Detection for right eye
+                                st.write("Step 3: Drowsiness Detection (Right Eye)")
+                                drowsiness_result_right = main3(right_eye_pil)
+                                st.write(f"🖼️ Right Eye Prediction: {drowsiness_result_right}")
+
+                                left_eye_pil = left_eye
+                                right_eye_pil = right_eye
+                            
+                            
+                            # Create ZIP file with all processed images
+                            zip_buffer = BytesIO()
+                            with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                                # Save original image
+                                pil_image.save(zip_buffer, format='PNG')
+                                zip_file.writestr("original_image.png", zip_buffer.getvalue())
+                                left_eye_pil = Image.fromarray(left_eye)
+                                right_eye_pil = Image.fromarray(right_eye)
+                                # Save left eye
+                                left_eye_buffer = BytesIO()
+                                left_eye_pil.save(left_eye_buffer, format='PNG')
+                                zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
+                                
+                                # Save right eye
+                                right_eye_buffer = BytesIO()
+                                right_eye_pil.save(right_eye_buffer, format='PNG')
+                                zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
+                            
+                            # Add download button for all images
+                            st.download_button(
+                                label="Download All Images",
+                                data=zip_buffer.getvalue(),
+                                file_name="complete_analysis.zip",
+                                mime="application/zip"
+                            )
+                        else:
+                            st.warning("No eyes detected in the image.")
+                    except Exception as e:
+                        st.error(f"Error during eye extraction: {str(e)}")
+                    finally:
+                        # Clean up temporary file
+                        if os.path.exists(temp_file):
+                            os.remove(temp_file)
+                else:
+                    st.warning("No person detected in the image. Stopping analysis.")
+        except Exception as e:
+            st.error(f"Error loading image: {str(e)}")
+            st.info("Please ensure you're uploading a valid image file.")
     else:
         st.warning("Please upload an image to begin the complete analysis.")
 
