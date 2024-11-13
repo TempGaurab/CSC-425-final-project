@@ -247,6 +247,7 @@ elif model == "Model 3: Image Classification":
         if st.button("Classify Image"):
             result,score = main3(image)  # Pass the image to the main3 function
             st.write(f"🖼️ Prediction: {result}")  # Display the prediction result
+            st.write(score)
             
             # Add download button for the processed image
             img_bytes = get_image_download_bytes(image)
