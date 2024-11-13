@@ -287,69 +287,87 @@ elif model == "Models Together":
                 # Step 2: Eye Extraction (from Model 2)
                 st.write("Step 2: Eye Extraction")
                 try:
-                    # Save image temporarily with proper error handling
-                    temp_file = "temp_upload.jpg"  # Using jpg instead of png for better compatibility
-                    image.save(temp_file, format='JPEG', quality=95)
+                    # Read image directly from uploaded file using BytesIO
+                    file_bytes = BytesIO(uploaded_file.read())
+                    image = Image.open(file_bytes)
                     
-                    # Get the annotated image and both eyes
-                    annotated_image, left_eye, right_eye = get_output(temp_file)
+                    # Convert to RGB if image is in RGBA mode
+                    if image.mode == 'RGBA':
+                        image = image.convert('RGB')
                     
-                    # Convert CV2 format to PIL for display
-                    if isinstance(annotated_image, np.ndarray):
-                        st.image(annotated_image, caption='Detected Face Landmarks', use_container_width=True)
+                    # Display uploaded image
+                    st.image(image, caption='Uploaded Image', use_container_width=True)
                     
-                        if left_eye is not None and right_eye is not None:
-                            st.success("Successfully extracted both eyes!")
-                            
-                            # Ensure eye images are in correct format
-                            left_eye_pil = left_eye
-                            right_eye_pil = right_eye
-                            
-                            # Display extracted eyes
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                left_eye_pil = Image.fromarray(left_eye)
-                                st.image(left_eye_pil, caption='One Eye', use_container_width=True)
-                            with col2:
-                                right_eye_pil = Image.fromarray(right_eye)
-                                st.image(right_eye_pil, caption='Other Eye', use_container_width=True)
-
-                            # Create ZIP file with extracted eyes
-
-                            zip_buffer = BytesIO()
-                            with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-                                # Save left eye
-                                left_eye_buffer = BytesIO()
-                                left_eye_pil.save(left_eye_buffer, format='PNG')
-                                zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
+                    if st.button("Extract Eyes"):
+                        with st.spinner("Extracting eyes..."):
+                            try:
+                                # Save image temporarily with proper error handling
+                                temp_file = "temp_upload.jpg"  # Using jpg instead of png for better compatibility
+                                image.save(temp_file, format='JPEG', quality=95)
                                 
-                                # Save right eye
-                                right_eye_buffer = BytesIO()
-                                right_eye_pil.save(right_eye_buffer, format='PNG')
-                                zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
-                            
-                            # Add download button
-                            st.download_button(
-                                label="Download Extracted Eyes",
-                                data=zip_buffer.getvalue(),
-                                file_name="extracted_eyes.zip",
-                                mime="application/zip"
-                            )
-                        else:
-                            st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
-                    else:
-                        st.error("Failed to process the image. Please try with a different image.")
+                                # Get the annotated image and both eyes
+                                annotated_image, left_eye, right_eye = get_output(temp_file)
+                                
+                                # Convert CV2 format to PIL for display
+                                if isinstance(annotated_image, np.ndarray):
+                                    st.image(annotated_image, caption='Detected Face Landmarks', use_container_width=True)
+                                
+                                    if left_eye is not None and right_eye is not None:
+                                        st.success("Successfully extracted both eyes!")
+                                        
+                                        # Ensure eye images are in correct format
+                                        left_eye_pil = left_eye
+                                        right_eye_pil = right_eye
+                                        
+                                        # Display extracted eyes
+                                        col1, col2 = st.columns(2)
+                                        with col1:
+                                            st.image(left_eye_pil, caption='One Eye', use_container_width=True)
+                                        with col2:
+                                            st.image(right_eye_pil, caption='Other Eye', use_container_width=True)
+
+                                        left_eye_pil = Image.fromarray(left_eye)
+                                        right_eye_pil = Image.fromarray(right_eye)
+                                        # Create ZIP file with extracted eyes
+
+                                        zip_buffer = BytesIO()
+                                        with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                                            # Save left eye
+                                            left_eye_buffer = BytesIO()
+                                            left_eye_pil.save(left_eye_buffer, format='PNG')
+                                            zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
+                                            
+                                            # Save right eye
+                                            right_eye_buffer = BytesIO()
+                                            right_eye_pil.save(right_eye_buffer, format='PNG')
+                                            zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
+                                        
+                                        # Add download button
+                                        st.download_button(
+                                            label="Download Extracted Eyes",
+                                            data=zip_buffer.getvalue(),
+                                            file_name="extracted_eyes.zip",
+                                            mime="application/zip"
+                                        )
+                                    else:
+                                        st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
+                                else:
+                                    st.error("Failed to process the image. Please try with a different image.")
+                                    
+                            except Exception as e:
+                                st.error(f"Error during eye extraction: {str(e)}")
+                                st.info("Try uploading a different image with a clearly visible face.")
+                            finally:
+                                # Clean up temporary file
+                                if os.path.exists(temp_file):
+                                    try:
+                                        os.remove(temp_file)
+                                    except Exception:
+                                        pass
                             
                 except Exception as e:
-                    st.error(f"Error during eye extraction: {str(e)}")
-                    st.info("Try uploading a different image with a clearly visible face.")
-                finally:
-                    # Clean up temporary file
-                    if os.path.exists(temp_file):
-                        try:
-                            os.remove(temp_file)
-                        except Exception:
-                            pass
+                    st.error(f"Error loading image: {str(e)}")
+                    st.info("Please ensure you're uploading a valid image file.")
     else:
         st.info("Please upload an image to extract eyes.")
 
