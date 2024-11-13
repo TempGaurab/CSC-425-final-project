@@ -15,7 +15,7 @@ def preprocess_image(image_path):
     return image_array
 
 def output(prediction):
-    if prediction > 0.3:
+    if prediction > 0.2:
         return 'Open'
     else:
         return "Closed"
