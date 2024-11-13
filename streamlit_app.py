@@ -280,10 +280,7 @@ elif model == "Models Together":
 
             # Step 1: Person Detection (from Model 1)
             st.write("Step 1: Person Detection")
-            image_bytes = uploaded_file.read()
-            nparr = np.frombuffer(image_bytes, np.uint8)
-            cv2_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-            person_detected = main(cv2_image)  # Assuming `main()` is your person detection function
+            person_detected = main(image)  # Assuming `main()` is your person detection function
             st.write(f"👤 Person detected: {person_detected}")
             
             if person_detected:
