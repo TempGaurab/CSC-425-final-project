@@ -279,60 +279,63 @@ elif model == "Models Together":
         
             if st.button("Run Complete Analysis"):
                 st.write("🔄 Running complete analysis...")
-                
-                # Step 1: Person Detection
+
+                # Step 1: Person Detection (from Model 1)
                 st.write("Step 1: Person Detection")
                 image_bytes = uploaded_file.read()
                 nparr = np.frombuffer(image_bytes, np.uint8)
                 cv2_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                person_detected = main(cv2_image)
+                person_detected = main(cv2_image)  # Assuming `main()` is your person detection function
                 st.write(f"👤 Person detected: {person_detected}")
                 
                 if person_detected:
-                    # Step 2: Eye Extraction
+                    # Step 2: Eye Extraction (from Model 2)
                     st.write("Step 2: Eye Extraction")
                     try:
+                        # Save image temporarily for extraction (as in Model 2)
+                        temp_file = "temp_upload.jpg"
+                        image.save(temp_file, format='JPEG', quality=95)
+                        
                         # Get the annotated image and both eyes
-                        annotated_image, left_eye, right_eye = get_output(cv2_image)
+                        annotated_image, left_eye, right_eye = get_output(temp_file)
                         
                         # Display annotated image
-                        st.image(annotated_image, caption='Detected Face Landmarks', use_container_width =True)
+                        st.image(annotated_image, caption='Detected Face Landmarks', use_container_width=True)
                         
-                        if left_eye is not None or right_eye is not None:
-                            st.success("Successfully extracted eyes!")
+                        if left_eye is not None and right_eye is not None:
+                            st.success("Successfully extracted both eyes!")
                             
-                            # Convert numpy arrays to PIL Images
+                            # Convert numpy arrays to PIL Images for display
                             left_eye_pil = left_eye
                             right_eye_pil = right_eye
                             
-                            # Display eyes side by side
+                            # Display extracted eyes side by side
                             col1, col2 = st.columns(2)
                             with col1:
-                                st.image(left_eye_pil, caption='Left Eye', use_container_width =True)
+                                st.image(left_eye_pil, caption='Left Eye', use_container_width=True)
                                 # Step 3: Drowsiness Detection for left eye
                                 st.write("Step 3: Drowsiness Detection (Left Eye)")
-                                drowsiness_result_left = main3(left_eye_pil)
+                                drowsiness_result_left = main3(left_eye_pil)  # Assuming `main3()` is the drowsiness detection function
                                 st.write(f"🖼️ Left Eye Prediction: {drowsiness_result_left}")
                                 
                             with col2:
-                                st.image(right_eye_pil, caption='Right Eye', use_container_width =True)
+                                st.image(right_eye_pil, caption='Right Eye', use_container_width=True)
                                 # Step 3: Drowsiness Detection for right eye
                                 st.write("Step 3: Drowsiness Detection (Right Eye)")
                                 drowsiness_result_right = main3(right_eye_pil)
                                 st.write(f"🖼️ Right Eye Prediction: {drowsiness_result_right}")
 
-                                left_eye_pil = left_eye
-                                right_eye_pil = right_eye
-                            
-                            
+                            left_eye_pil = Image.fromarray(left_eye)
+                            right_eye_pil = Image.fromarray(right_eye)
+
                             # Create ZIP file with all processed images
                             zip_buffer = BytesIO()
                             with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
                                 # Save original image
+                                pil_image = image
                                 pil_image.save(zip_buffer, format='PNG')
                                 zip_file.writestr("original_image.png", zip_buffer.getvalue())
-                                left_eye_pil = Image.fromarray(left_eye)
-                                right_eye_pil = Image.fromarray(right_eye)
+                                
                                 # Save left eye
                                 left_eye_buffer = BytesIO()
                                 left_eye_pil.save(left_eye_buffer, format='PNG')
@@ -351,7 +354,7 @@ elif model == "Models Together":
                                 mime="application/zip"
                             )
                         else:
-                            st.warning("No eyes detected in the image.")
+                            st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
                     except Exception as e:
                         st.error(f"Error during eye extraction: {str(e)}")
                     finally:
@@ -365,6 +368,7 @@ elif model == "Models Together":
             st.info("Please ensure you're uploading a valid image file.")
     else:
         st.warning("Please upload an image to begin the complete analysis.")
+
 
 
 elif model == "Team Members":
