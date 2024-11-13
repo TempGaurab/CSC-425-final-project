@@ -287,14 +287,12 @@ elif model == "Models Together":
                 # Step 2: Eye Extraction (from Model 2)
                 st.write("Step 2: Eye Extraction")
                 try: 
-                    try: 
-                        # Get the annotated image and both eyes
-                        annotated_image, left_eye, right_eye = get_output(image)
-                        
-                        # Convert CV2 format to PIL for display
-                        if annotated_image:
+                    # Get the annotated image and both eyes
+                    annotated_image, left_eye, right_eye = get_output(image)
+                    
+                    # Convert CV2 format to PIL for display
+                    if isinstance(annotated_image, np.ndarray):
                             st.image(annotated_image, caption='Detected Face Landmarks', use_container_width=True)
-                        
                             if left_eye is not None and right_eye is not None:
                                 st.success("Successfully extracted both eyes!")
                                 
@@ -311,10 +309,7 @@ elif model == "Models Together":
 
                                 left_eye_pil = Image.fromarray(left_eye)
                                 right_eye_pil = Image.fromarray(right_eye)
-                                # Create ZIP file with extracted eyes               
-                    except Exception as e:
-                        st.error(f"Error during eye extraction: {str(e)}")
-                        st.info("Try uploading a different image with a clearly visible face.")          
+                            # Create ZIP file with extracted eyes                      
                 except Exception as e:
                     st.error(f"Error loading image: {str(e)}")
                     st.info("Please ensure you're uploading a valid image file.")
