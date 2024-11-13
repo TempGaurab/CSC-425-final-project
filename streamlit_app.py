@@ -306,8 +306,12 @@ elif model == "Models Together":
                             col1, col2 = st.columns(2)
                             with col1:
                                 st.image(left_eye, caption='Left Eye', use_container_width=True)
+                                result = main3(left_eye)
+                                st.info(result)
                             with col2:
                                 st.image(right_eye, caption='Right Eye', use_container_width=True)
+                                result = main3(right_eye)
+                                st.info(result)
                         else:
                             st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
                     else:
