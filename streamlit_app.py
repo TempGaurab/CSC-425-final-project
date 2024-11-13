@@ -315,32 +315,7 @@ elif model == "Models Together":
 
                                 left_eye_pil = Image.fromarray(left_eye)
                                 right_eye_pil = Image.fromarray(right_eye)
-                                # Create ZIP file with extracted eyes
-
-                                zip_buffer = BytesIO()
-                                with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-                                    # Save left eye
-                                    left_eye_buffer = BytesIO()
-                                    left_eye_pil.save(left_eye_buffer, format='PNG')
-                                    zip_file.writestr("left_eye.png", left_eye_buffer.getvalue())
-                                    
-                                    # Save right eye
-                                    right_eye_buffer = BytesIO()
-                                    right_eye_pil.save(right_eye_buffer, format='PNG')
-                                    zip_file.writestr("right_eye.png", right_eye_buffer.getvalue())
-                                
-                                # Add download button
-                                st.download_button(
-                                    label="Download Extracted Eyes",
-                                    data=zip_buffer.getvalue(),
-                                    file_name="extracted_eyes.zip",
-                                    mime="application/zip"
-                                )
-                            else:
-                                st.warning("Could not detect eyes clearly in the image. Please ensure the face is clearly visible.")
-                        else:
-                            st.error("Failed to process the image. Please try with a different image.")
-                            
+                                # Create ZIP file with extracted eyes               
                     except Exception as e:
                         st.error(f"Error during eye extraction: {str(e)}")
                         st.info("Try uploading a different image with a clearly visible face.")
