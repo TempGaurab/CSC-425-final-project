@@ -95,7 +95,7 @@ def extract_eyes_from_image(rgb_image, detection_result):
             # Add padding
             padding_horizontal = 10
             padding_vertical_top = 13
-            padding_vertical_bottom = 10
+            padding_vertical_bottom = 5
             
             x_min = max(0, x_min - padding_horizontal)
             x_max = min(image_width, x_max + padding_horizontal)
