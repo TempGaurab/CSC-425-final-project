@@ -5,6 +5,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import matplotlib.pyplot as plt
+import tempfile
 
 
 def visualize(
@@ -42,21 +43,53 @@ def visualize(
 
   return image
 
-def main(image_path):
-    title = detectperson(image_path)
-    if title == "person":
-        return True
-    return False
+def main(image):
+    """
+    Modified main function to handle both file paths and numpy arrays
+    Args:
+        image: Can be either a file path (str) or numpy array
+    """
+    if isinstance(image, np.ndarray):
+        # If image is numpy array, save it temporarily and get the path
+        image_path = process_image_for_detection(image)
+    else:
+        image_path = image
+    
+    try:
+        title = detectperson(image_path)
+        # Clean up temporary file if it was created
+        if isinstance(image, np.ndarray):
+            os.remove(image_path)
+        return title == "person"
+    except Exception as e:
+        # Clean up temporary file if it was created
+        if isinstance(image, np.ndarray):
+            os.remove(image_path)
+        raise e
+    
+def process_image_for_detection(image_array):
+    """Convert numpy array to MediaPipe image format using a temporary file"""
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
+        # Save the numpy array as an image file
+        cv2.imwrite(tmp_file.name, cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB))
+        return tmp_file.name
+
+
 
 def detectperson(imageid):
     base_options = python.BaseOptions(model_asset_path='efficientdet.tflite')
     options = vision.ObjectDetectorOptions(base_options=base_options,
-                                        score_threshold=0.5)
+                                         score_threshold=0.5)
     detector = vision.ObjectDetector.create_from_options(options)
 
-    # STEP 3: Load the input image.
+    # Load the input image
     image = mp.Image.create_from_file(imageid)
-    # STEP 4: Detect objects in the input image.
+    # Detect objects in the input image
     detection_result = detector.detect(image)
+    
+    # Check if any detections were made
+    if not detection_result.detections:
+        return "no_person"
+    
     title = detection_result.detections[0].categories[0].category_name
     return title
