@@ -68,7 +68,7 @@ def extract_eyes_from_image(rgb_image, detection_result):
                 y_coords.append(landmark.y * image_height)
             
             # Calculate bounding box with padding
-            padding = 20  # Adjust this value to change the size of the rectangle
+            padding = 30  # Adjust this value to change the size of the rectangle
             x_min, x_max = min(x_coords), max(x_coords)
             y_min, y_max = min(y_coords), max(y_coords)
             
