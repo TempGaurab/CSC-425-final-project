@@ -3,7 +3,7 @@ from PIL import Image
 from keras.models import load_model
 
 def get_model():
-    best_model = load_model('bestModel2.keras')
+    best_model = load_model('bestModel2.h5')
     return best_model
 
 def preprocess_image(image_path):
