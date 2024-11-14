@@ -41,6 +41,7 @@ def extract_eyes_from_image(rgb_image, detection_result):
     RIGHT_EYE_INDICES = list(mp.solutions.face_mesh.FACEMESH_RIGHT_EYE)
     LEFT_EYEBROW_INDICES = list(mp.solutions.face_mesh.FACEMESH_LEFT_EYEBROW)
     RIGHT_EYEBROW_INDICES = list(mp.solutions.face_mesh.FACEMESH_RIGHT_EYEBROW)
+    NOSE_INDICES = list(mp.solutions.face_mesh.FACEMESH_NOSE)
 
     # Loop through the detected faces
     for idx in range(len(face_landmarks_list)):
