@@ -73,9 +73,9 @@ def extract_eyes_from_image(rgb_image, detection_result):
             y_min, y_max = min(y_coords), max(y_coords)
             
             # Add padding
-            x_min = max(0, x_min - 0.9 *padding) 
+            x_min = max(0, x_min - padding) 
             x_max = min(image_width, x_max + padding) 
-            y_min = max(0, y_min -  0. 9 * padding) 
+            y_min = max(0, y_min - padding) 
             y_max = min(image_height, y_max + padding)
             
             # Convert to integers
