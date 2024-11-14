@@ -37,61 +37,65 @@ def extract_eyes_from_image(rgb_image, detection_result):
     left_eye_img = None
     right_eye_img = None
 
-    # Define eye landmark indices
+    # Define landmark indices
     LEFT_EYE_INDICES = list(mp.solutions.face_mesh.FACEMESH_LEFT_EYE)
     RIGHT_EYE_INDICES = list(mp.solutions.face_mesh.FACEMESH_RIGHT_EYE)
+    LEFT_EYEBROW_INDICES = list(mp.solutions.face_mesh.FACEMESH_LEFT_EYEBROW)
+    RIGHT_EYEBROW_INDICES = list(mp.solutions.face_mesh.FACEMESH_RIGHT_EYEBROW)
 
-    # Loop through the detected faces to visualize
+    # Loop through the detected faces
     for idx in range(len(face_landmarks_list)):
         face_landmarks = face_landmarks_list[idx]
 
         # Get image dimensions
         image_height, image_width = annotated_image.shape[:2]
 
-        # Dictionary to store eye coordinates and images
-        eye_images = {'left': None, 'right': None}
-
-        # Extract both eyes
-        for eye_type, eye_indices in [('left', LEFT_EYE_INDICES), ('right', RIGHT_EYE_INDICES)]:
-            # Get eye landmarks
+        # Extract both eye regions
+        for side, eye_indices, brow_indices in [
+            ('left', LEFT_EYE_INDICES, LEFT_EYEBROW_INDICES),
+            ('right', RIGHT_EYE_INDICES, RIGHT_EYEBROW_INDICES)
+        ]:
+            # Get eye and eyebrow landmarks
             x_coords = []
             y_coords = []
             
-            # Flatten the eye indices (they come as pairs of connections)
-            flat_indices = [idx for pair in eye_indices for idx in pair]
+            # Combine and flatten eye and eyebrow indices
+            all_indices = eye_indices + brow_indices
+            flat_indices = [idx for pair in all_indices for idx in pair]
             unique_indices = list(set(flat_indices))
             
-            # Collect all x and y coordinates for the eye
+            # Collect all x and y coordinates for the eye and eyebrow
             for landmark_idx in unique_indices:
                 landmark = face_landmarks[landmark_idx]
                 x_coords.append(landmark.x * image_width)
                 y_coords.append(landmark.y * image_height)
             
             # Calculate bounding box with padding
-            padding = 30  # Adjust this value to change the size of the rectangle
+            padding_horizontal = 20  # Horizontal padding
+            padding_vertical = 15    # Vertical padding
             x_min, x_max = min(x_coords), max(x_coords)
             y_min, y_max = min(y_coords), max(y_coords)
             
             # Add padding
-            x_min = max(0, x_min - padding)
-            x_max = min(image_width, x_max + padding) 
-            y_min = max(0, y_min - padding)
-            y_max = min(image_height, y_max + padding)+ 25
+            x_min = max(0, x_min - padding_horizontal)
+            x_max = min(image_width, x_max + padding_horizontal)
+            y_min = max(0, y_min - padding_vertical)
+            y_max = min(image_height, y_max + padding_vertical)
             
             # Convert to integers
             x_min, x_max = int(x_min), int(x_max)
             y_min, y_max = int(y_min), int(y_max)
             
-            # Extract eye region
-            eye_img = rgb_image[y_min:y_max, x_min:x_max]
+            # Extract eye-eyebrow region
+            eye_region = rgb_image[y_min:y_max, x_min:x_max]
             
-            # Store the eye image
-            if eye_type == 'left':
-                left_eye_img = eye_img
+            # Store the eye region image
+            if side == 'left':
+                left_eye_img = eye_region
             else:
-                right_eye_img = eye_img
+                right_eye_img = eye_region
 
-            # Draw rectangle on annotated image (optional, for visualization)
+            # Draw rectangle on annotated image
             cv2.rectangle(annotated_image, 
                         (x_min, y_min), 
                         (x_max, y_max), 
