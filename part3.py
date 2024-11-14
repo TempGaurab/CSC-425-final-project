@@ -9,6 +9,7 @@ def get_model():
 def preprocess_image(image_path):
     # Load and preprocess the image
     image = image_path.resize((64, 64)).convert('L')  # Convert to grayscale
+    image = image.convert('L')
     image_array = np.array(image)  # Convert to numpy array
     image_array = image_array.reshape(1, 64, 64, 1)  # Reshape for model input
     image_array = image_array.astype('float32') / 255.0  # Normalize the image
