@@ -63,13 +63,14 @@ def about_the_club():
     with col1:
         st.markdown("""
         <div class="team-member">
-            <span class="team-member-name">Gaurab Baral</span><br>
-            <span class="team-member-role">baralg1@nku.edu</span><br>
+            <span class="team-member-role">Gaurab Baral</span><br>
+            <span class="team-member-name">baralg1@nku.edu</span><br>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
         <div class="team-member">
             <span class="team-member-role">Sushant Shrestha</span><br>
+            <span class="team-member-name">shresthas11@nku.edu</span><br>
         </div>
         """, unsafe_allow_html=True)
 
@@ -77,11 +78,13 @@ def about_the_club():
         st.markdown("""
         <div class="team-member">
             <span class="team-member-role">Abhishek Shrestha</span><br>
+            <span class="team-member-name">shresthaa5@nku.edu</span><br>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
         <div class="team-member">
             <span class="team-member-role">Nabin Lama</span><br>
+            <span class="team-member-name">laman1@nku.edu</span><br>
         </div>
         """, unsafe_allow_html=True)
 
