@@ -17,8 +17,11 @@ def get_image_download_bytes(pil_image, format='PNG'):
 
 def cv2_to_pil(cv2_image):
     """Convert CV2 image to PIL format"""
-    cv2_image_rgb = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB)
-    pil_image = Image.fromarray(cv2_image_rgb)
+    if cv2_image is None or cv2_image.size == 0:
+        raise ValueError("Input image is empty or not loaded properly.")
+    else:
+        cv2_image_rgb = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB)
+        pil_image = Image.fromarray(cv2_image_rgb)
     return pil_image
 
 def about_the_club():
