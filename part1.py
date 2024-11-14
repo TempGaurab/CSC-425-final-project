@@ -75,7 +75,6 @@ def process_image_for_detection(image_array):
         return tmp_file.name
 
 
-
 def detectperson(imageid):
     base_options = python.BaseOptions(model_asset_path='efficientdet.tflite')
     options = vision.ObjectDetectorOptions(base_options=base_options,
