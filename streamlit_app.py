@@ -63,7 +63,8 @@ def about_the_club():
     with col1:
         st.markdown("""
         <div class="team-member">
-            <span class="team-member-role">Gaurab Baral</span><br>
+            <span class="team-member-name">Gaurab Baral</span><br>
+            <span class="team-member-role">baralg1@nku.edu</span><br>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("""
