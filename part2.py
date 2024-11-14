@@ -79,7 +79,6 @@ def extract_eyes_from_image(rgb_image, detection_result):
             # Calculate core measurements
             eye_center_y = (max(eye_y_coords) + min(eye_y_coords)) / 2
             eye_height = max(eye_y_coords) - min(eye_y_coords)
-            eye_width = max(eye_x_coords) - min(eye_x_coords)
             brow_top = min(brow_y_coords)
             
             # Calculate bounding box
@@ -93,10 +92,9 @@ def extract_eyes_from_image(rgb_image, detection_result):
             y_max = y_min + desired_total_height
             
             # Add padding
-            padding_horizontal = int(eye_width * 0.15)  # Proportional to eye width
-            padding_vertical_top = int(eye_height * 0.2)  # Proportional to eye height
-            padding_vertical_bottom = int(eye_height * 0.2)
-
+            padding_horizontal = 20
+            padding_vertical_top = 15
+            padding_vertical_bottom = 10
             
             x_min = max(0, x_min - padding_horizontal)
             x_max = min(image_width, x_max + padding_horizontal)
