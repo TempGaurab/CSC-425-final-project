@@ -36,11 +36,10 @@ def extract_eyes_from_image(rgb_image, detection_result):
     left_eye_img = None
     right_eye_img = None
 
-    # Define landmark indices
     EYE_INDICES = [mp.solutions.face_mesh.FACEMESH_LEFT_EYE, mp.solutions.face_mesh.FACEMESH_RIGHT_EYE]
     BROW_INDICES = [mp.solutions.face_mesh.FACEMESH_LEFT_EYEBROW, mp.solutions.face_mesh.FACEMESH_RIGHT_EYEBROW]
 
-    for idx, face_landmarks in enumerate(face_landmarks_list):
+    for face_landmarks in face_landmarks_list:
         image_height, image_width = annotated_image.shape[:2]
 
         for side, eye_indices, brow_indices in zip(['left', 'right'], EYE_INDICES, BROW_INDICES):
